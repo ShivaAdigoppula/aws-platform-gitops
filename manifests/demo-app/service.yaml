@@ -3,9 +3,11 @@ kind: Service
 metadata:
   name: demo-app
 spec:
-  type: ClusterIP              # reachable INSIDE the cluster only (no AWS load balancer yet)
+  type: LoadBalancer                 # Kubernetes asks AWS for a load balancer
+  loadBalancerSourceRanges:          # the load balancer only accepts these IPs
+    - 109.41.112.109/32              # my laptop (remove this block = public to everyone)
   selector:
-    app: demo-app              # send traffic to pods with this label
+    app: demo-app                    # send traffic to pods with this label
   ports:
-    - port: 80                 # the Service's port
-      targetPort: 8000         # the container's port
+    - port: 80                       # the load balancer listens on 80…
+      targetPort: 8000               # …and forwards to the pods' 8000
